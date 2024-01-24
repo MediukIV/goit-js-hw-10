@@ -16,7 +16,7 @@ form.addEventListener('submit', function (event) {
 
   // Перевіряємо, чи обрано стан
   if (!selectedState) {
-    iziToast.error({ 
+    iziToast.error({
       title: 'Error',
       message: 'Please select a state (Fulfilled/Rejected)',
     });
