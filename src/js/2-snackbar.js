@@ -6,70 +6,53 @@ import "izitoast/dist/css/iziToast.min.css";
 const form = document.querySelector('.form');
 
 // Додаємо обробник події submit для форми
-form.addEventListener('submit', function (event) {
-  event.preventDefault();
+form.addEventListener('submit', evt => {
+  evt.preventDefault();
 
   // Отримуємо значення затримки та стану з форми
-  const delayInput = form.querySelector('[name="delay"]');
-  const stateInputs = form.querySelectorAll('[name="state"]');
-  const selectedState = Array.from(stateInputs).find(input => input.checked);
+  const delay = form.delay.value;
+  const state = form.state.value;
 
-  // Перевіряємо, чи обрано стан
-  if (!selectedState) {
-    iziToast.error({
-      title: 'Error',
-      message: 'Please select a state (Fulfilled/Rejected)',
-    });
-    return;
-  }
+  // Обробляємо виконання промісу
+  makePromise({ value: delay, delay: delay, state: state })
+    .then(value =>
+      iziToast.show({
+        title: '✅ OK',
+        titleColor: '#FFFFFF',
+        position: 'topRight',
+        message:  `Fulfilled promise in ${delay}ms`,
+        messageColor: '#fff',
+        messageSize: '16px',
+        backgroundColor: '#59A10D',
+        close: false,
+        closeOnClick: true,
+      })
+    )
+    .catch(error =>
+      iziToast.error({
+        title: 'Error',
+        titleColor: '#FFFFFF',
+        position: 'topRight',
+        message: `Rejected promise in ${delay}ms`,
+        messageColor: '#fff',
+        messageSize: '16px',
+        backgroundColor: '#EF4040',
+        close: false,
+        closeOnClick: true,
+      })
+    );
+  form.reset();
+});
 
-  // Отримуємо значення затримки та перетворюємо його на ціле число
-  const delay = parseInt(delayInput.value, 10);
-
-  // Перевіряємо, чи введено коректне значення затримки
-  if (isNaN(delay) || delay <= 0) {
-    iziToast.error({
-      title: 'Error',
-      message: 'Please enter a valid positive delay value',
-    });
-    return;
-  }
-
-  // Створюємо проміс з вказаною затримкою та обраним станом
-  const promise = new Promise((resolve, reject) => {
+// Створюємо проміс з вказаною затримкою та обраним станом
+const makePromise = ({ value, delay, state }) => {
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (selectedState.value === 'fulfilled') {
-        resolve(delay);
+      if (state === 'fulfilled') {
+        resolve(value);
       } else {
-        reject(delay);
+        reject(value);
       }
     }, delay);
   });
-
-  // Обробляємо виконання промісу
-  promise.then(
-    (result) => {
-      iziToast.success({
-          title: 'Fulfilled',
-          titleColor: '#FFFFFF',
-          message: `✅ Fulfilled promise in ${result}ms`,
-          messageColor: '#FFFFFF',
-          messageSize: '16px',
-          iconColor: '#FFFFFF',
-          position: 'topRight'
-      });
-    },
-    (error) => {
-      iziToast.error({
-          title: 'Rejected',
-          titleColor: '#FFFFFF',
-          message: `❌ Rejected promise in ${error}ms`,
-          messageColor: '#FFFFFF',
-          messageSize: '16px',
-          backgroundColor: '#EF4040',
-          iconColor: '#FFFFFF',
-          position: 'topRight'
-      });
-    }
-  );
-});
+};
