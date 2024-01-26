@@ -43,13 +43,6 @@ const options = {
 // Ініціалізуємо flatpickr з опціями
 flatpickr("#datetime-picker", options);
 
-// Перевіряємо, чи кнопка повинна бути активною при завантаженні сторінки
-const currentDate = new Date();
-if (!userSelectedDate || userSelectedDate <= currentDate) {
-  const startBtn = document.querySelector('[data-start]');
-  startBtn.setAttribute('disabled', true);
-}
-
 // Оголошуємо змінні для таймера
 let countdownTimer;
 let targetDate;
@@ -87,6 +80,9 @@ document.querySelector('[data-start]').addEventListener('click', () => {
 
   // Деактивуємо кнопку «Start»
   document.querySelector('[data-start]').setAttribute('disabled', true);
+
+  // Деактивуємо input
+  document.querySelector('#datetime-picker').setAttribute('disabled', true);
 });
 
 // Функція для форматування чисел з додаванням ведучого нуля

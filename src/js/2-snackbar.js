@@ -10,11 +10,11 @@ form.addEventListener('submit', evt => {
   evt.preventDefault();
 
   // Отримуємо значення затримки та стану з форми
-  const delay = form.delay.value;
+  const delay = parseInt(form.delay.value);
   const state = form.state.value;
 
   // Обробляємо виконання промісу
-  makePromise({ value: delay, delay: delay, state: state })
+  makePromise({ delay: delay, state: state })
     .then(value =>
       iziToast.show({
         title: '✅ OK',
@@ -45,13 +45,13 @@ form.addEventListener('submit', evt => {
 });
 
 // Створюємо проміс з вказаною затримкою та обраним станом
-const makePromise = ({ value, delay, state }) => {
+const makePromise = ({ delay, state }) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (state === 'fulfilled') {
-        resolve(value);
+        resolve(delay);
       } else {
-        reject(value);
+        reject(delay);
       }
     }, delay);
   });
